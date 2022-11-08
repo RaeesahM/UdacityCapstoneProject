@@ -26,11 +26,21 @@ The AutoML task is set to regression as we want to predict a numerical value (di
 ### Results
 A total of 23 models were trained by the AutoML model. The best model was a Voting Ensemble. This makes sense as it combines the results from many models. Looking at the feature importance (using Explain Model) we see that the carat,y cut and clarity were the most important features. Model improvement may be improved by using feature selection before model training. In particular some cleaning could be done to remove the "Column2" feature as this is just the index of the sample in the dataset and is not correlated to the diamond price. 
 
+The RunDetails widget shows the completed runs.
+![alt text](AutoMLRunDetailsScreenshot.png)
 
-*TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
+The screenshot below shows the best model trained with its parameters:
+![alt text](AutoMLBestRunModel.png)
+
 
 ## Hyperparameter Tuning
 *TODO*: What kind of model did you choose for this experiment and why? Give an overview of the types of parameters and their ranges used for the hyperparameter search
+
+Gradient boosting is an ensemble of decision trees algorithms. It is a popular techniques for tabular regression predictive modeling problems given that it performs well across a wide range of datasets in practice. A major problem of gradient boosting is that it is slow to train the model. This is particularly a problem when using the model on large datasets with tens of thousands of examples as is the case for the diamond dataset. This training can be accelerated by binning the continuous variables so that the input variables can be reduced to fewer unique values. This is then referred to as histogram gradient bootsing and is the model employed for the diamond dataset hyperdrive experiment.
+
+In the experiment, two hyperparameters are tuned the learning rate and the maximum tree depth. The learning rate controls determines the impact of each tree on the final outcome. GBM works by starting with an initial estimate which is updated using the output of each tree. The learning parameter controls the magnitude of this change in the estimates. Lower values are generally preferred as they make the model robust to the specific characteristics of tree and thus allowing it to generalize well. Lower values would require higher number of trees to model all the relations and will be computationally expensive. In the experiment the learning rate . The maximum tree depth is the maximum depth of a tree. It is used to control over-fitting as higher depth will allow model to learn relations very specific to a particular sample. In the experiment this is a choice of values between 8 and 30. We saw that higher values for this resulted in a smaller mean squared error but when evaluating the best model on a test set the model did not perform as well.
+
+
 
 
 ### Results
