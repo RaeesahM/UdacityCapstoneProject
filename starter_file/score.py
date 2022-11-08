@@ -1,39 +1,56 @@
-import logging
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 import json
+import logging
+import os
+import pickle
 import numpy as np
+import pandas as pd
 import joblib
-import  os
+
+import azureml.automl.core
+from azureml.automl.core.shared import logging_utilities, log_server
+from azureml.telemetry import INSTRUMENTATION_KEY
 
 from inference_schema.schema_decorators import input_schema, output_schema
 from inference_schema.parameter_types.numpy_parameter_type import NumpyParameterType
-from azureml.core.run import Run
+from inference_schema.parameter_types.pandas_parameter_type import PandasParameterType
+
+
+input_sample = pd.DataFrame({"Column2": pd.Series(["example_value"], dtype="object"), "carat": pd.Series([0.0], dtype="float64"), "cut": pd.Series(["example_value"], dtype="object"), "color": pd.Series(["example_value"], dtype="object"), "clarity": pd.Series(["example_value"], dtype="object"), "depth": pd.Series([0.0], dtype="float64"), "table": pd.Series([0.0], dtype="float64"), "x": pd.Series([0.0], dtype="float64"), "y": pd.Series([0.0], dtype="float64"), "z": pd.Series([0.0], dtype="float64")})
+output_sample = np.array([0])
+try:
+    log_server.enable_telemetry(INSTRUMENTATION_KEY)
+    log_server.set_verbosity('INFO')
+    logger = logging.getLogger('azureml.automl.core.scoring_script')
+except:
+    pass
 
 
 def init():
     global model
+    # This name is model.id of model that we want to deploy deserialize the model file back
+    # into a sklearn model
     model_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'), 'model.pkl')
-    model = joblib.load(model_path)
+    path = os.path.normpath(model_path)
+    path_split = path.split(os.sep)
+    log_server.update_custom_dimensions({'model_name': path_split[-3], 'model_version': path_split[-2]})
+    try:
+        logger.info("Loading model from path.")
+        model = joblib.load(model_path)
+        logger.info("Loading successful.")
+    except Exception as e:
+        logging_utilities.log_traceback(e, logger)
+        raise
 
-input_sample = np.array([[6,0.24,'Very Good','J','VVS2',62.8,57,3.94,3.96,2.48]])
-output_sample = np.array([5010])
 
-@input_schema('data', NumpyParameterType(input_sample))
+@input_schema('data', PandasParameterType(input_sample))
 @output_schema(NumpyParameterType(output_sample))
-def run(raw_data):
-    data = json.loads(raw_data)["data"]
-    data = numpy.array(data)
-    logging.info("model 1: request received")
+def run(data):
     try:
         result = model.predict(data)
-        # You can return any JSON-serializable object.
-        return result.tolist()
+        return json.dumps({"result": result.tolist()})
     except Exception as e:
-        error = str(e)
-        return error
-
-#def run(raw_data):
-   # data = json.loads(raw_data)["data"]
-   # data = numpy.array(data)
-    #result = model.predict(data)
-   # logging.info("Request processed")
-   # return result.tolist()
+        result = str(e)
+        return json.dumps({"error": result})
