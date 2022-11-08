@@ -38,15 +38,27 @@ The screenshot below shows the best model trained with its parameters:
 
 Gradient boosting is an ensemble of decision trees algorithms. It is a popular techniques for tabular regression predictive modeling problems given that it performs well across a wide range of datasets in practice. A major problem of gradient boosting is that it is slow to train the model. This is particularly a problem when using the model on large datasets with tens of thousands of examples as is the case for the diamond dataset. This training can be accelerated by binning the continuous variables so that the input variables can be reduced to fewer unique values. This is then referred to as histogram gradient bootsing and is the model employed for the diamond dataset hyperdrive experiment.
 
-In the experiment, two hyperparameters are tuned the learning rate and the maximum tree depth. The learning rate controls determines the impact of each tree on the final outcome. GBM works by starting with an initial estimate which is updated using the output of each tree. The learning parameter controls the magnitude of this change in the estimates. Lower values are generally preferred as they make the model robust to the specific characteristics of tree and thus allowing it to generalize well. Lower values would require higher number of trees to model all the relations and will be computationally expensive. In the experiment the learning rate . The maximum tree depth is the maximum depth of a tree. It is used to control over-fitting as higher depth will allow model to learn relations very specific to a particular sample. In the experiment this is a choice of values between 8 and 30. We saw that higher values for this resulted in a smaller mean squared error but when evaluating the best model on a test set the model did not perform as well.
+Prior to training the data was cleaned. The "Column2" feature was removed as it is just the number of the entry in the dataset and is not correlated with the diamond price. The categorical variables were converted to integer values representing the ordinal nature of the category. For example with know that a diamond with no inclusions is better and hence more valuable compared to a diamond that is slightly included.
 
 
+In the experiment, two hyperparameters are tuned the learning rate and the maximum tree depth. The learning rate controls determines the impact of each tree on the final outcome. GBM works by starting with an initial estimate which is updated using the output of each tree. The learning parameter controls the magnitude of this change in the estimates. Lower values are generally preferred as they make the model robust to the specific characteristics of tree and thus allowing it to generalize well. Lower values would require higher number of trees to model all the relations and will be computationally expensive. In the experiment the learning rate is a uniform distribution from 0.001 and 0.05. 
 
+
+The maximum tree depth is the maximum depth of a tree. It is used to control over-fitting as higher depth will allow model to learn relations very specific to a particular sample. In the experiment this is a choice of values between 8 and 30. We saw that higher values for this resulted in a smaller mean squared error but when evaluating the best model on a test set the model did not perform as well.
+
+
+A Bandit Early stopping policy is specified to stop poorly performing jobs and improve computational efficiency. The benefit of BanditPolicy is that it allows us to define a minimum required improvement to continue with the parameter search. A random sampling method is used as it is not as computationally expensive as a grid search or Bayesian samplling and based on experience in previous projects yield similar results. The goal of the experiment is to minimise the mean squared error as this is a regression task so we want to minimise the error between the actual diamond price and the predicted diamond price.
 
 ### Results
-*TODO*: What are the results you got with your model? What were the parameters of the model? How could you have improved it?
+The best model obtained achieves a mean squared error of less than 0.2. This model had a low learning rate of just 0.001 and a maximum depth of 20. When the model was tested on test data and accuracy of 64%. Comparing this to the average accuracy obtained by the AutoML model of 93% the hyperdrive model performance was not as good. It is possible that using such a high maximum depth the model was overfitted to the training data and hence achieved a poor performance on test data. In the future, reduce the range of maximum tree depth values.
 
-*TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
+The graph of all the models can be seen in the screenshot below:
+![alt text](HyperparamModelPerformance.png)
+
+The screenshots betlow show the RunDetails` widget as well as a screenshot of the best model trained with it's parameters
+![alt text](HyperdriveRunWidget.png)
+![alt text](HyperdriveBestRun.png)
+
 
 ## Model Deployment
 *TODO*: Give an overview of the deployed model and instructions on how to query the endpoint with a sample input.
