@@ -12,7 +12,7 @@ In order to run this project version 1.47 of the Azure ML SDK must be used.
 The dataset that will be used in this experiment is from Kaggle. It is a tablular dataset that contains 10 features related to polished diamonds such as the cut, carat weight and colour. The aim of the data is to use these features to predict the price of the polished diamond. Most of the features are numeric but the cut, clarity and colour are categorical variables which are ordinal in nature. 
 
 The dataset can be downloaded from:
-www.kaggle.co./datasets/nancyalaswad90/diamond-prices
+www.kaggle.com/datasets/nancyalaswad90/diamond-prices
 
 ### Task
 The features from the dataset are used to predict the price for round polished diamonds in dollars.
@@ -61,13 +61,20 @@ The screenshots betlow show the RunDetails` widget as well as a screenshot of th
 
 
 ## Model Deployment
-*TODO*: Give an overview of the deployed model and instructions on how to query the endpoint with a sample input.
+The best model was the Voting Ensemble created by AutoML. This model was registered and then deployed as a webservice to an Azure Container instance with 2 CPU cores and 2GB of memory.
+
+To query the model use a json file and POST request as follows:
+resp = requests.post(aci_service.scoring_uri, data, headers=headers)
+
+where data is a json file. 
+
+The model endpoint can be seen in the screenshots below:
+![alt text](AutoMLEndpointStatus.png)
+![alt text](AutoMLEndpointActive.png)
+
 
 ## Screen Recording
 *TODO* Provide a link to a screen recording of the project in action. Remember that the screencast should demonstrate:
 - A working model
 - Demo of the deployed  model
 - Demo of a sample request sent to the endpoint and its response
-
-## Standout Suggestions
-*TODO (Optional):* This is where you can provide information about any standout suggestions that you have attempted.
