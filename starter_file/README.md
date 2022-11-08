@@ -21,10 +21,11 @@ The features from the dataset are used to predict the price for round polished d
 The dataset was uploaded and registered to the Azure Machine Learning Studio. We access the dataset using its key within the Jupyter notebook and the training script.
 
 ## Automated ML
-*TODO*: Give an overview of the `automl` settings and configuration you used for this experiment
+The AutoML task is set to regression as we want to predict a numerical value (diamond price) from a set of features. We will use the compute cluster that already exists in the workspace to train the model. The experiment is set to time out after 30 minutes so that we don't consume an indefinite amount of resources. The primary metric that will be optimised is normalized_root_mean_squared_error as we want to minimise the average squared error. As the dataset is not very large, 5 cross-validations are used. Featurisation is enabled as no data cleaning was done after reading in the data and inputting it to the AutoML model. Early stopping is also enabled.
 
 ### Results
-*TODO*: What are the results you got with your automated ML model? What were the parameters of the model? How could you have improved it?
+A total of 23 models were trained by the AutoML model. The best model was a Voting Ensemble. This makes sense as it combines the results from many models. Looking at the feature importance (using Explain Model) we see that the carat,y cut and clarity were the most important features. Model improvement may be improved by using feature selection before model training. In particular some cleaning could be done to remove the "Column2" feature as this is just the index of the sample in the dataset and is not correlated to the diamond price. 
+
 
 *TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
 
