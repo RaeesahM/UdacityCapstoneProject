@@ -24,7 +24,16 @@ The dataset was uploaded and registered to the Azure Machine Learning Studio. We
 The AutoML task is set to regression as we want to predict a numerical value (diamond price) from a set of features. We will use the compute cluster that already exists in the workspace to train the model. The experiment is set to time out after 30 minutes so that we don't consume an indefinite amount of resources. The primary metric that will be optimised is normalized_root_mean_squared_error as we want to minimise the average squared error. As the dataset is not very large, 5 cross-validations are used. Featurisation is enabled as no data cleaning was done after reading in the data and inputting it to the AutoML model. Early stopping is also enabled.
 
 ### Results
-A total of 23 models were trained by the AutoML model. The best model was a Voting Ensemble. This makes sense as it combines the results from many models. Looking at the feature importance (using Explain Model) we see that the carat,y cut and clarity were the most important features. Model improvement may be improved by using feature selection before model training. In particular some cleaning could be done to remove the "Column2" feature as this is just the index of the sample in the dataset and is not correlated to the diamond price. 
+A total of 23 models were trained by the AutoML model. The best model was a Voting Ensemble. This makes sense as it combines the results from many models rather than a single model.  A Voting Ensemble predicts based on the weighted average of predicted regression targets. At a high level, the Voting ensemble algorithm initializes the ensemble with up to five models with the best individual scores, and verifies that these models are within 5% threshold of the best score to avoid a poor initial ensemble. Then for each ensemble iteration, a new model is added to the existing ensemble and the resulting score is calculated. If a new model improved the existing ensemble score, the ensemble is updated to include the new model.
+
+Looking at the feature importance (using Explain Model) we see that the carat,y cut and clarity were the most important features. 
+![alt text](AutoMLNBFeatures.png)
+
+
+## Model improvement 
+The model may be improved by using custom featurization instead of using the auto featurization before model training. By specifying custom featurization we can improve the model performance as we can include domain knowledge. In particular:
+* Cleaning could be done to remove the "Column2" feature as this is just the index of the sample in the dataset and is not correlated to the diamond price. 
+* Represent the categorical features such as cut, clarity and colour as integers as these features are ordinal. For example a diamond which is slightly included is worth less compared to a flawless diamond
 
 The RunDetails widget shows the completed runs.
 ![alt text](AutoMLRunDetailsScreenshot.png)
@@ -61,7 +70,7 @@ The screenshots betlow show the RunDetails` widget as well as a screenshot of th
 
 
 ## Model Deployment
-The best model was the Voting Ensemble created by AutoML. This model was registered and then deployed as a webservice to an Azure Container instance with 2 CPU cores and 2GB of memory.
+The best model was the Voting Ensemble created by AutoML. This makes sense as it aggregates the results of multiple models. This model was registered and then deployed as a webservice to an Azure Container instance with 2 CPU cores and 2GB of memory.
 
 To query the model use a json file and POST request as follows:
 resp = requests.post(aci_service.scoring_uri, data, headers=headers)
