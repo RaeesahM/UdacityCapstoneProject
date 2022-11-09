@@ -64,6 +64,8 @@ The best model obtained achieves a mean squared error of less than 0.2. This mod
 The graph of all the models can be seen in the screenshot below:
 ![alt text](HyperparamModelPerformance.png)
 
+There were 30 child runs in the hyperdrive experiment. The two best performing models had very low learning rates of just 0.001 and maximum tree depths of 20 and 8 respectively. The model with the higher tree depth achieved a slightly better mean squared error 0.18 vs 0.26. The low learning rate is preferable as it allows better model generalization but a higher tree depth may create a model that is overfitted to the training data. 
+
 The screenshots betlow show the RunDetails` widget as well as a screenshot of the best model trained with it's parameters
 ![alt text](HyperdriveRunWidget.png)
 ![alt text](HyperdriveBestRun.png)
