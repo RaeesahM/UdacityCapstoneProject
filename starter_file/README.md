@@ -74,7 +74,5 @@ The model endpoint can be seen in the screenshots below:
 
 
 ## Screen Recording
-*TODO* Provide a link to a screen recording of the project in action. Remember that the screencast should demonstrate:
-- A working model
-- Demo of the deployed  model
-- Demo of a sample request sent to the endpoint and its response
+Below is a link to a screencast that demonstates a working deployed model:
+https://youtu.be/0wszNMiKFEI
